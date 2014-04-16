@@ -1,4 +1,4 @@
-(function(module) {
+(function(global) {
     
     "use strict";
     
@@ -10,7 +10,11 @@
         PROTOTYPE;
         
     // exports
-    module.Lazy = Lazy;
+    if ( typeof process !== 'undefined' ) {
+        module.exports = Lazy;
+    } else {
+        global.Lazy = Lazy;
+    }
     
     // Check variable is Function
     function isF(fn) {
@@ -139,7 +143,7 @@
         PARALLELS[this._appointID] = this;
         
         return this;
-    }
+    };
     
     Lazy.Parallel.prototype = {
         _interface    : 'Lazy',
@@ -188,12 +192,12 @@
     for ( PROTOTYPE in Lazy.prototype ) {
         if ( ! PROTOTYPE.isPrototypeOf(Lazy.prototype)
              && isF(Lazy.prototype[PROTOTYPE]) ) {
-            (function(__proto__) {
-                PromisedLazy.prototype[__proto__] = function() {
-                    var fn  = Lazy.prototype[__proto__],
+            (function(proto) {
+                PromisedLazy.prototype[proto] = function() {
+                    var fn  = Lazy.prototype[proto],
                         ret = fn.apply(this.lazy, arguments);
                     
-                    return ( REGEX.test(__proto__) )
+                    return ( REGEX.test(proto) )
                              ? ret
                              : this;
                 };
@@ -589,4 +593,4 @@
         delete PARALLELS[this._appointID];
     }
     
-})(typeof Module !== 'undefined' ? Module : this);
+})(this);
